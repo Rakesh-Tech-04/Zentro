@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+    /* auth */
+    --auth-text: #767671;
+    --auth-primary: #A1B187;
+    --auth-primary-hover: #b1c199;
+
+    --bg: rgb(32, 30, 30);
+    --text: white;
+    --primary: rgb(51, 50, 50);
+
+    /* buttons */
+
+    --button-primary: #669DF1;
+    --button-primary-hover: #8FB8F6;
+    --button-text: black;
+    --button-text-color: rgb(141, 141, 141);
+    --button-hover: #2A2C21;
+
+
+    --action-bg: rgb(45, 44, 44);
+    --action-bg-hover: rgb(61, 60, 60);
+}
+
+.light {
+    --bg: white;
+    --text: black;
+}

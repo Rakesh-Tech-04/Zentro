@@ -1,0 +1,46 @@
+in react query
+1. invalidateQueries() (slower)
+Delete
+   ↓
+API Request
+   ↓
+Success
+   ↓
+GET /lists (another request)
+   ↓
+UI updates
+
+You're making two network requests:
+
+DELETE
+GET
+
+The UI updates after the second request completes.
+
+2. setQueryData() in onSuccess (faster)
+Delete
+   ↓
+API Request
+   ↓
+Success
+   ↓
+Update cache
+   ↓
+UI updates
+
+You're making only one network request:
+
+DELETE
+
+No refetch is needed because you already know what changed.
+
+3. onMutate() (fastest perceived by the user)
+Delete
+   ↓
+UI updates immediately
+   ↓
+API Request
+   ↓
+Success (nothing changes)
+
+The user sees the change before the server even responds.
