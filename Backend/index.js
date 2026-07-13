@@ -46,7 +46,6 @@ app.use((err, req, res, next) => {
         statusCode = 400;
         message = "Duplicate field value entered";
     }
-    console.log(message)
 
     res.status(statusCode).json({ success: false, message })
 })

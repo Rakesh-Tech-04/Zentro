@@ -7,6 +7,7 @@ import { CreateBoardModal } from '../components/CreateBoardModal'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, horizontalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import { UseSortableForBoard } from '../components/UseSortableForBoard'
+import { toast } from 'react-toastify'
 
 export const Dashboard = () => {
     const queryClient = useQueryClient()
@@ -15,7 +16,7 @@ export const Dashboard = () => {
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 8, // 👈 IMPORTANT
+                distance: 8,
             },
         })
     )
@@ -41,6 +42,7 @@ export const Dashboard = () => {
     }
     if (isPending) return <div>...Loading</div>
     if (error) return <div>...Something</div>
+    
     return (
 
         <div className='bg-(--bg) min-h-screen text-(--text)'>

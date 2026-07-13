@@ -78,8 +78,8 @@ export const Board = () => {
     updateBoardMutation.mutate({ title: boardTitle })
   }
 
-  // if (boardQueries.isPending) return <div>...Loading</div>
-  // if (boardQueries.error) return <div>Something</div>
+  if (BoardQuery.isPending) return <div>...Loading</div>
+  if (BoardQuery.isError) return <div>Something</div>
 
   return (
     <div className='bg-(--bg) min-h-screen text-(--text)'>

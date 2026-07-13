@@ -4,6 +4,7 @@ import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { api } from '../utils/axios';
 import { useUser } from '../utils/UserContext';
+import { toast } from 'react-toastify';
 
 export const Auth = () => {
   let navigate = useNavigate()
@@ -12,10 +13,10 @@ export const Auth = () => {
   let [isLogin, setIsLogin] = useState(true)
   let [authData, setAuthData] = useState({ name: '', email: '', password: '' })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const url = isLogin ? 'login' : 'signup'
-    api.post(`auth/${url}`, authData)
+    await api.post(`auth/${url}`, authData)
       .then(({ data }) => {
         setAuthData({ name: '', email: '', password: '' })
         setUsername(data.name)
@@ -24,8 +25,10 @@ export const Auth = () => {
         navigate('/')
       })
       .catch((err) => {
+        if (err.response) {
+          toast.error(err.response.data.message)
+        }
         console.log(err)
-        console.log(err.response)
       })
   }
 
@@ -61,7 +64,7 @@ export const Auth = () => {
 
 
             <label className={labelStyle} htmlFor="email">Email address*</label>
-            <input className={inputStyle} id='email' value={authData.email} onChange={(e) => setAuthData((prev) => ({ ...prev, email: e.target.value }))} type="text" placeholder='Enter your email address...' />
+            <input className={inputStyle} id='email' value={authData.email} onChange={(e) => setAuthData((prev) => ({ ...prev, email: e.target.value }))} type="email" placeholder='Enter your email address...' />
 
             <label className={labelStyle} htmlFor="password">Password*</label>
             <div className='relative'>
@@ -72,7 +75,7 @@ export const Auth = () => {
 
             <p className='text-(--auth-text) text-sm'>Password must be at least more than 3</p>
 
-            <button className='bg-(--auth-primary) py-[0.4rem] rounded-lg my-4 cursor-pointer hover:bg-(--auth-primary-hover)'>{isLogin ? "Login" : 'Create account'}</button>
+            <button type='submit' className='bg-(--auth-primary) py-[0.4rem] rounded-lg my-4 cursor-pointer hover:bg-(--auth-primary-hover)'>{isLogin ? "Login" : 'Create account'}</button>
 
             <div className='text-(--auth-text) text-center'>{isLogin ? "Don’t have an account?" : "Already have an account?"} <span onClick={() => setIsLogin(prev => !prev)} className='text-(--auth-primary) underline underline-offset-4 cursor-pointer hover:text-(--auth-primary-hover)'>{isLogin ? "Sign up" : "Log in"}</span></div>
 

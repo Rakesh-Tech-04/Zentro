@@ -23,7 +23,7 @@ router
 
 router
     .route('/:boardId/lists')
-    .get(wrapAsync(getLists))
+    .get(authMiddleware, wrapAsync(getLists))
     .post(authMiddleware, wrapAsync(createList))
 
 // for cards
@@ -34,7 +34,7 @@ router
 
 router
     .route('/:boardId/cards')
-    .get(wrapAsync(getCards))
+    .get(authMiddleware, wrapAsync(getCards))
 
 
 export default router

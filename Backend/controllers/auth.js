@@ -31,8 +31,9 @@ export const signup = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
     const { email, password } = req.body
+    if(!email || !password) throw new ExpressError(400, 'Invalid input')
     const user = await User.findOne({ email })
-    if (!user) throw new ExpressError(401, 'User not found')
+    if (!user) throw new ExpressError(400, 'User not found')
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) throw new ExpressError(400, 'Password is wrong')
     const payload = {

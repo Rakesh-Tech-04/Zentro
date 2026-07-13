@@ -13,11 +13,10 @@ import { DndContext, closestCenter } from '@dnd-kit/core';
 
 export const List = ({ boardId, list, cards }) => {
   let queryClient = useQueryClient()
-  let [isListActions, setisListActions] = useState(null)
-  let [isList, setIsList] = useState({ title: '', bg: 'white' })
-  let [isCardAction, setIsCardAction] = useState(null)
+  let [ListAction, setListAction] = useState(null)
+  let [listData, setListData] = useState({ title: '', bg: 'white' })
   let [isCardInput, setIsCardInput] = useState(false)
-  let [isCard, setIsCard] = useState({ title: "", bg: 'white', description: '' })
+  let [cardData, setCardData] = useState({ title: "", bg: 'white', description: '' })
 
   let { transform, transition, attributes, listeners, setNodeRef } = useSortable({ id: list })
 
@@ -30,14 +29,14 @@ export const List = ({ boardId, list, cards }) => {
   let actionRef = useRef(null)
 
   useEffect(() => {
-    if (isListActions) {
+    if (ListAction) {
       actionRef.current?.focus()
     }
-  }, [isListActions])
+  }, [ListAction])
 
   useEffect(() => {
     if (list) {
-      setIsList({ title: list.title, bg: list.bg })
+      setListData({ title: list.title, bg: list.bg })
     }
   }, [list])
 
@@ -57,7 +56,7 @@ export const List = ({ boardId, list, cards }) => {
   })
 
   let updateList = () => {
-    updateListMutation.mutate(isList)
+    updateListMutation.mutate(listData)
   }
 
   //delete list
@@ -129,8 +128,8 @@ export const List = ({ boardId, list, cards }) => {
   })
 
   let createCard = () => {
-    createCardMutation.mutate(isCard)
-    setIsCard({ title: "", bg: 'white' })
+    createCardMutation.mutate(cardData)
+    setCardData({ title: "", bg: 'white' })
     setIsCardInput(null)
   }
 
@@ -138,41 +137,37 @@ export const List = ({ boardId, list, cards }) => {
     <div {...attributes} {...listeners} ref={setNodeRef} style={style} className='bg-black py px-2 rounded-lg relative'>
       {/*  list section */}
       <div className='flex justify-between cursor-pointer px-1 py-2'>
-        <input className='text-lg w-[50%]' value={isList.title} onChange={(e) => { setIsList((prev) => ({ ...prev, title: e.target.value })) }} onBlur={updateList} onKeyDown={(e) => {
+        <input className='text-lg w-[50%]' value={listData.title} onChange={(e) => { setListData((prev) => ({ ...prev, title: e.target.value })) }} onBlur={updateList} onKeyDown={(e) => {
           e.key === 'Enter' && e.target.blur()
         }} />
         <BsThreeDots onClick={() => {
-          setisListActions(list._id)
+          setListAction(list._id)
         }} />
 
         {/* list action */}
 
-        {isListActions == list._id &&
+        {ListAction == list._id &&
           <div ref={actionRef} tabIndex={0} onBlur={(e) => {
             if (!e.currentTarget.contains(e.relatedTarget)) {
-              setisListActions(null)
+              setListAction(null)
             }
           }} className='absolute bg-(--action-bg) text-(--text) top-4 right-5 outline-none z-1 rounded-lg overflow-hidden'>
-            <TitleForAction title={"List Action"} setIsAction={setisListActions} />
+            <TitleForAction title={"List Action"} setIsAction={setListAction} />
             <ButtonForAction onClick={() => { deleteListMutation.mutate(list._id) }} title={'Delete'} />
           </div>
         }
       </div>
 
       {/* card section */}
-      <DndContext collisionDetection={closestCenter}>
-        <SortableContext strategy={verticalListSortingStrategy} items={cards}>
-          {
-            cards?.map((card) =>
-              <Card key={card._id} card={card} boardId={boardId} />
-            )
-          }
-        </SortableContext>
-      </DndContext>
+      {
+        cards?.map((card) =>
+          <Card key={card._id} card={card} boardId={boardId} />
+        )
+      }
       {/* add card */}
       <div>
         {isCardInput ? <div className='mt-4'>
-          <input name='card' value={isCard.title} onChange={(e) => setIsCard((prev) => ({ ...prev, title: e.target.value }))} type="text" className='border p-1 rounded h-16' onKeyDown={(e) => { e.key === 'Enter' && createCard() }} autoFocus />
+          <input name='card' value={cardData.title} onChange={(e) => setCardData((prev) => ({ ...prev, title: e.target.value }))} type="text" className='border p-1 rounded h-16' onKeyDown={(e) => { e.key === 'Enter' && createCard() }} autoFocus />
           <div className='flex items-center mt-2 mb-3 mx-1'>
             <button onClick={() => createCard()} className='bg-(--button-primary) text-(--button-text) px-1 py-0.5 mr-2 rounded cursor-pointer'>Add Card</button>
             <RxCross2 className='cursor-pointer' onClick={() => setIsCardInput(false)} />

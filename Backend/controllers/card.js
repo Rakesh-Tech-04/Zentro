@@ -3,7 +3,7 @@ import { ExpressError } from "../utils/ExpressError.js"
 
 export const getCards = async (req, res) => {
     let { boardId } = req.params
-    let cards = await Card.find({ board: boardId })
+    let cards = await Card.find({ board: boardId, user: req.user.id })
     res.status(200).json(cards)
 }
 
@@ -18,22 +18,12 @@ export const createCard = async (req, res) => {
 
 export const updateCard = async (req, res) => {
     let { cardId } = req.params
-    let oldCard = await Card.findById(cardId)
-    let ownerId = req.user.id
-    if (ownerId !== oldCard.user.toString()) {
-        throw new ExpressError(403, 'You are not onwer of this card')
-    }
-    let card = await Card.findByIdAndUpdate(cardId, req.body, { returnDocument: 'after' }).select('-user')
+    let card = await Card.findOneAndUpdate({ _id: cardId, user: req.user.id }, req.body, { returnDocument: "after" }).select("-user")
     res.status(200).json(card)
 }
 
 export const deleteCard = async (req, res) => {
     let { cardId } = req.params
-    let oldCard = await Card.findById(cardId)
-    let ownerId = req.user.id
-    if (ownerId !== oldCard.user.toString()) {
-        throw new ExpressError(403, 'You are not onwer of this card')
-    }
-    let card = await Card.findByIdAndDelete(cardId).select('-user')
+    let card = await Card.findOneAndDelete({ _id: cardId, user: req.user.id }).select('-user')
     res.status(200).json(card)
 }

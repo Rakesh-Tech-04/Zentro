@@ -11,26 +11,16 @@ import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
 
 export const Card = ({ card, boardId }) => {
-  let { transform, transition, attributes, listeners, setNodeRef } = useSortable({ id: card })
-
-  let style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    cursor: 'grab'
-  }
-
   let queryClient = useQueryClient()
-  let [isCard, setIsCard] = useState({ title: "", bg: 'white', description: '' })
-  let [isCardInput, setIsCardInput] = useState(null)
-  let [isCardAction, setIsCardAction] = useState(null)
+  let [CardAction, setCardAction] = useState(null)
   let [isOpen, setIsOpen] = useState(false)
   let actionRef = useRef(null)
 
   useEffect(() => {
-    if (isCardAction) {
+    if (CardAction) {
       actionRef.current?.focus();
     }
-  }, [isCardAction]);
+  }, [CardAction]);
 
 
   let cardOnSuccess = () => {
@@ -63,26 +53,26 @@ export const Card = ({ card, boardId }) => {
 
   return (
 
-    <div {...attributes} {...listeners} ref={setNodeRef} style={style} className='border-2 border-(--primary) p-2 my-2 rounded-lg cursor-pointer bg-(--primary) hover:border-blue-400 hover:border-2 relative'  >
+    <div className='border-2 border-(--primary) p-2 my-2 rounded-lg cursor-pointer bg-(--primary) hover:border-blue-400 hover:border-2 relative'  >
 
       <div className='flex items-center justify-between group' onClick={() => { setIsOpen(true) }}>
         <h1>{card.title}</h1>
         <FaRegEdit className='hidden group-hover:block' onClick={(e) => {
           e.stopPropagation()
-          setIsCardAction(card._id)
+          setCardAction(card._id)
         }} />
       </div>
       <CardUpdateModal isOpen={isOpen} setIsOpen={setIsOpen} card={card} />
 
       {/* card action */}
       {
-        isCardAction == card._id &&
+        CardAction == card._id &&
         <div ref={actionRef} tabIndex={0} onBlur={(e) => {
           if (!e.currentTarget.contains(e.relatedTarget)) {
-            setIsCardAction(null);
+            setCardAction(null);
           }
         }} className='absolute top-5 right-5 border-none bg-(--action-bg) text-(--text) outline-none z-1 rounded-lg overflow-hidden' >
-          <TitleForAction title={'Card Action'} setIsAction={setIsCardAction} />
+          <TitleForAction title={'Card Action'} setIsAction={setCardAction} />
 
           <ButtonForAction title={'Delete'} onClick={() => { deleteCardMutation.mutate(card._id) }} />
         </div>
