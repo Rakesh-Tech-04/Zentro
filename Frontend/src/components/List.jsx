@@ -9,7 +9,6 @@ import { TitleForAction } from './TitleForAction';
 import { ButtonForAction } from './ButtonForAction';
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { DndContext, closestCenter } from '@dnd-kit/core';
 
 export const List = ({ boardId, list, cards }) => {
   let queryClient = useQueryClient()
@@ -18,7 +17,7 @@ export const List = ({ boardId, list, cards }) => {
   let [isCardInput, setIsCardInput] = useState(false)
   let [cardData, setCardData] = useState({ title: "", bg: 'white', description: '' })
 
-  let { transform, transition, attributes, listeners, setNodeRef } = useSortable({ id: list })
+  let { transform, transition, attributes, listeners, setNodeRef } = useSortable({ id: list._id, data: { type: "list" } })
 
   let style = {
     transform: CSS.Transform.toString(transform),
@@ -159,11 +158,13 @@ export const List = ({ boardId, list, cards }) => {
       </div>
 
       {/* card section */}
-      {
-        cards?.map((card) =>
-          <Card key={card._id} card={card} boardId={boardId} />
-        )
-      }
+      <SortableContext strategy={verticalListSortingStrategy} items={cards?.map((card) => card._id) || []}>
+        {
+          cards?.map((card) =>
+            <Card key={card._id} card={card} boardId={boardId} />
+          )
+        }
+      </SortableContext>
       {/* add card */}
       <div>
         {isCardInput ? <div className='mt-4'>

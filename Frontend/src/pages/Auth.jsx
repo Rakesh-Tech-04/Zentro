@@ -3,12 +3,12 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { api } from '../utils/axios';
-import { useUser } from '../utils/UserContext';
+import { setAccesstoken, useUser } from '../utils/UserContext';
 import { toast } from 'react-toastify';
 
 export const Auth = () => {
   let navigate = useNavigate()
-  let { setUsername, setAccesstoken } = useUser()
+  let { setUserData} = useUser()
   let [isPasswordHidden, setIsPasswordHidden] = useState(true)
   let [isLogin, setIsLogin] = useState(true)
   let [authData, setAuthData] = useState({ name: '', email: '', password: '' })
@@ -19,13 +19,13 @@ export const Auth = () => {
     await api.post(`auth/${url}`, authData)
       .then(({ data }) => {
         setAuthData({ name: '', email: '', password: '' })
-        setUsername(data.name)
+        setUserData(data.name)
         setAccesstoken(data.accesstoken)
-        localStorage.setItem('accesstoken', data.accesstoken)
         navigate('/')
       })
       .catch((err) => {
         if (err.response) {
+          console.log(err.response)
           toast.error(err.response.data.message)
         }
         console.log(err)

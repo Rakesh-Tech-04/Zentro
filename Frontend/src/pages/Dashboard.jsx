@@ -5,7 +5,7 @@ import { api } from '../utils/axios'
 import { useNavigate } from 'react-router-dom'
 import { CreateBoardModal } from '../components/CreateBoardModal'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, horizontalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable'
 import { UseSortableForBoard } from '../components/UseSortableForBoard'
 import { toast } from 'react-toastify'
 
@@ -51,7 +51,7 @@ export const Dashboard = () => {
             <DndContext sensors={sensors} onDragEnd={handleDrag} collisionDetection={closestCenter}>
                 {/* boards */}
                 <div className='flex gap-3 mt-4 flex-wrap mx-4'>
-                    <SortableContext strategy={horizontalListSortingStrategy} items={data}>
+                    <SortableContext strategy={rectSortingStrategy} items={data}>
                         {data?.map((board) =>
                             <UseSortableForBoard key={board._id} board={board} />
                         )}

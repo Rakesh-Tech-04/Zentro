@@ -82,10 +82,10 @@ export const Board = () => {
   if (BoardQuery.isError) return <div>Something</div>
 
   return (
-    <div className='bg-(--bg) min-h-screen text-(--text)'>
+    <div className='bg-(--bg) text-(--text) min-h-screen p-1'>
       <Navbar />
 
-      <div className='border mt-4 rounded-2xl overflow-hidden mx-2'>
+      <div className='border rounded-2xl overflow-hidden mx-2'>
 
         {/* board section */}
         <div className='p-4 bg-blue-300 flex justify-between items-center relative'>

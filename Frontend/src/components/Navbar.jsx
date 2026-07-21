@@ -1,22 +1,21 @@
 import React, { useState } from 'react'
 import { CiSearch } from "react-icons/ci";
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useUser } from '../utils/UserContext';
+import { setAccesstoken, useUser } from '../utils/UserContext';
 import { api } from '../utils/axios';
 import { CreateBoardModal } from './CreateBoardModal';
 
 export const Navbar = () => {
     let navigate = useNavigate()
     let [isOpen, setIsOpen] = useState(false)
-    let { setUsername, setAccesstoken } = useUser()
+    let { setUserData } = useUser()
     let [isUserMenu, setIsUserMenu] = useState(false)
 
     const handleLogout = async () => {
         await api.delete('auth/logout')
             .then(() => {
-                setUsername(null)
+                setUserData(null)
                 setAccesstoken(null)
-                localStorage.removeItem("accesstoken")
                 navigate('/auth')
             })
             .catch((err) => {
@@ -26,7 +25,7 @@ export const Navbar = () => {
     }
 
     return (
-        <div className='flex justify-between items-center p-2'>
+        <div className='flex justify-between items-center p-2 '>
             {/* left section */}
             <NavLink to={'/'} className='flex items-center gap-2'><img src="https://img.magnific.com/free-vector/bird-colorful-gradient-design-vector_343694-2506.jpg?semt=ais_hybrid&w=740&q=80" className='w-10' />Zentro</NavLink>
 

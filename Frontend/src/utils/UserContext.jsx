@@ -1,31 +1,37 @@
 import { useContext, createContext, useEffect, useState } from "react";
 import { api } from "./axios";
 
+let token = null
 const UserContext = createContext()
 
 export const UserContextProvider = ({ children }) => {
-    let [accesstoken, setAccesstoken] = useState(null)
-    let [username, setUsername] = useState(null)
+    let [userData, setUserData] = useState(null)
+    let [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         async function fetchData() {
             await api.get("auth/refreshtoken")
                 .then(({ data }) => {
-                    localStorage.setItem('accesstoken', data.accesstoken)
                     setAccesstoken(data.accesstoken)
-                    setUsername(data.name)
+                    setUserData(data.name)
                 })
                 .catch((err) => {
                     console.log(err)
                     setAccesstoken(null)
-                    setUsername(null)
+                    setUserData(null)
                 })
+                .finally(() => {
+                    setIsLoading(false)
+                })
+
         }
         fetchData()
     }, [])
 
+    if (isLoading) return null
+
     return (
-        <UserContext.Provider value={{ accesstoken, username, setUsername, setAccesstoken }}>
+        <UserContext.Provider value={{ userData, setUserData }}>
             {children}
         </UserContext.Provider>
     )
@@ -33,4 +39,12 @@ export const UserContextProvider = ({ children }) => {
 
 export const useUser = () => {
     return useContext(UserContext)
+}
+
+export const setAccesstoken = (value) => {
+    token = value
+}
+
+export const getAccesstoken = () => {
+    return token
 }

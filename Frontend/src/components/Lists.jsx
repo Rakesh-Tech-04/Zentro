@@ -3,14 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../utils/axios';
 import { List } from './List';
 import { FiPlus } from "react-icons/fi";
-import { DndContext, closestCenter, useSensor, PointerSensor, useSensors } from '@dnd-kit/core'
-import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable'
+import { DndContext, useSensor, PointerSensor, useSensors, closestCorners } from '@dnd-kit/core'
+import { arrayMove, rectSortingStrategy, SortableContext, } from '@dnd-kit/sortable'
 
 export const Lists = ({ boardId }) => {
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 8, // 👈 IMPORTANT
+                distance: 8,
             },
         })
     )
@@ -79,17 +79,27 @@ export const Lists = ({ boardId }) => {
     const handleDrag = (event) => {
         let { over, active } = event
         if (!over || over.id === active.id) return
-        queryClient.setQueryData(['lists', boardId], (lists) => {
-            const oldIndex = lists.findIndex(list => list === active.id)
-            const newIndex = lists.findIndex(list => list === over.id)
-            return arrayMove(lists, oldIndex, newIndex)
-        })
+        let type = active.data.current.type
+        if (type === 'list') {
+            queryClient.setQueryData(['lists', boardId], (lists) => {
+                const oldIndex = lists.findIndex(list => list._id === active.id)
+                const newIndex = lists.findIndex(list => list._id === over.id)
+                return arrayMove(lists, oldIndex, newIndex)
+            })
+        }
+        else if (type === 'card') {
+            queryClient.setQueryData(['cards', boardId], (cards) => {
+                const oldIndex = cards.findIndex(card => card._id === active.id)
+                const newIndex = cards.findIndex(card => card._id === over.id)
+                return arrayMove(cards, oldIndex, newIndex)
+            })
+        }
     }
 
     return (
-        <DndContext sensors={sensors} onDragEnd={handleDrag} collisionDetection={closestCenter}>
+        <DndContext sensors={sensors} onDragEnd={handleDrag} collisionDetection={closestCorners}>
             <div className='flex flex-wrap m-4 items-start text-white px-3 py-2 rounded-lg gap-4'>
-                <SortableContext strategy={horizontalListSortingStrategy} items={listQueries.data}>
+                <SortableContext strategy={rectSortingStrategy} items={listQueries.data?.map((list) => list._id) || []}>
                     {listQueries.data?.map((list) =>
                         <List key={list._id} boardId={boardId} list={list} cards={cardQueries.data?.filter((cards) => cards.list === list._id)} />
                     )}

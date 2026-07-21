@@ -16,6 +16,14 @@ export const Card = ({ card, boardId }) => {
   let [isOpen, setIsOpen] = useState(false)
   let actionRef = useRef(null)
 
+  let { transform, transition, attributes, listeners, setNodeRef } = useSortable({ id: card._id, data: { type: 'card' } })
+
+  let style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    cursor: "grab"
+  }
+
   useEffect(() => {
     if (CardAction) {
       actionRef.current?.focus();
@@ -53,7 +61,7 @@ export const Card = ({ card, boardId }) => {
 
   return (
 
-    <div className='border-2 border-(--primary) p-2 my-2 rounded-lg cursor-pointer bg-(--primary) hover:border-blue-400 hover:border-2 relative'  >
+    <div style={style} {...attributes} {...listeners} ref={setNodeRef} className='border-2 border-(--primary) p-2 my-2 rounded-lg cursor-pointer bg-(--primary) hover:border-blue-400 hover:border-2 relative'>
 
       <div className='flex items-center justify-between group' onClick={() => { setIsOpen(true) }}>
         <h1>{card.title}</h1>

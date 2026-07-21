@@ -6,7 +6,7 @@ const tokenSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    refreshToken: {
+    refreshtoken: {
         type: String,
         required: true,
         unique: true
@@ -19,7 +19,6 @@ const tokenSchema = new mongoose.Schema({
     timestamps: true
 })
 
-// tokenSchema.index({ user: -1, refreshToken: -1 })
 tokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 7 })
 
 export const Token = mongoose.model("Token", tokenSchema)
